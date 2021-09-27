@@ -95,7 +95,7 @@ struct _Host {
     /* random stream */
     Random* random;
 
-#ifdef USE_PERF_TIMERS
+#if defined(USE_PERF_TIMERS) || defined(USE_CPU_TIME)
     /* track the time spent executing this host */
     GTimer* executionTimer;
 #endif
@@ -113,7 +113,7 @@ Host* host_new(HostParameters* params) {
     Host* host = g_new0(Host, 1);
     MAGIC_INIT(host);
 
-#ifdef USE_PERF_TIMERS
+#if defined(USE_PERF_TIMERS) || defined(USE_CPU_TIME)
     /* start tracking execution time for this host.
      * creating the timer automatically starts it. */
     host->executionTimer = g_timer_new();
@@ -154,7 +154,7 @@ Host* host_new(HostParameters* params) {
     host->processIDCounter = 1000;
     host->referenceCount = 1;
 
-#ifdef USE_PERF_TIMERS
+#if defined(USE_PERF_TIMERS) || defined(USE_CPU_TIME)
     /* we go back to the manager setup process here, so stop counting this host execution */
     g_timer_stop(host->executionTimer);
 #endif
@@ -237,7 +237,7 @@ static void _host_free(Host* host) {
  * process that actually hold references to the host. if you just called host_unref instead
  * of this function, then host_free would never actually get called. */
 void host_shutdown(Host* host) {
-#ifdef USE_PERF_TIMERS
+#if defined(USE_PERF_TIMERS) || defined(USE_CPU_TIME)
     g_timer_continue(host->executionTimer);
 #endif
 
@@ -319,7 +319,7 @@ void host_shutdown(Host* host) {
         g_free(host->dataDirPath);
     }
 
-#ifdef USE_PERF_TIMERS
+#if defined(USE_PERF_TIMERS) || defined(USE_CPU_TIME)
     gdouble totalExecutionTime = g_timer_elapsed(host->executionTimer, NULL);
     g_timer_destroy(host->executionTimer);
     message("host '%s' has been shut down, total execution time was %f seconds",
@@ -356,7 +356,7 @@ void host_unlock(Host* host) {
     g_mutex_unlock(&(host->lock));
 }
 
-#ifdef USE_PERF_TIMERS
+#if defined(USE_PERF_TIMERS) || defined(USE_CPU_TIME)
 /* resumes the execution timer for this host */
 void host_continueExecutionTimer(Host* host) {
     MAGIC_ASSERT(host);
@@ -367,6 +367,12 @@ void host_continueExecutionTimer(Host* host) {
 void host_stopExecutionTimer(Host* host) {
     MAGIC_ASSERT(host);
     g_timer_stop(host->executionTimer);
+}
+
+/* returns the fractional number of seconds that have been spent executing this host */
+gdouble host_getElapsedExecutionTime(Host* host) {
+    MAGIC_ASSERT(host);
+    return g_timer_elapsed(host->executionTimer, NULL);
 }
 #endif
 

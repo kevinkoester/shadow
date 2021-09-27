@@ -93,6 +93,7 @@ option(SHADOW_TEST "build tests (default: OFF)" OFF)
 option(SHADOW_EXPORT "export service libraries and headers (default: OFF)" OFF)
 option(SHADOW_WERROR "turn compiler warnings into errors. (default: OFF)" OFF)
 option(SHADOW_USE_PERF_TIMERS "compile in timers for tracking the run time of various internal operations. (default: OFF)" OFF)
+option(SHADOW_USE_CPU_TIMER "compile in a timer for tracking the used cpu times by all nodes (default: OFF)" OFF)
 
 ## display selected user options
 MESSAGE(STATUS)
@@ -103,6 +104,7 @@ MESSAGE(STATUS "SHADOW_TEST=${SHADOW_TEST}")
 MESSAGE(STATUS "SHADOW_EXPORT=${SHADOW_EXPORT}")
 MESSAGE(STATUS "SHADOW_WERROR=${SHADOW_WERROR}")
 MESSAGE(STATUS "SHADOW_USE_PERF_TIMERS=${SHADOW_USE_PERF_TIMERS}")
+MESSAGE(STATUS "SHADOW_USE_CPU_TIMER=${SHADOW_USE_CPU_TIMER}")
 MESSAGE(STATUS "-------------------------------------------------------------------------------")
 MESSAGE(STATUS)
 
@@ -136,6 +138,11 @@ endif(SHADOW_WERROR STREQUAL ON)
 if(SHADOW_USE_PERF_TIMERS STREQUAL ON)
     message(STATUS "Perf timers enabled")
     add_definitions(-DUSE_PERF_TIMERS)
+endif()
+
+if(SHADOW_USE_CPU_TIMER STREQUAL ON)
+	message(STATUS "CPU timer enabled")
+    add_definitions(-DUSE_CPU_TIME)
 endif()
 
 if($ENV{VERBOSE})

@@ -66,13 +66,15 @@ void host_unref(Host* host);
 void host_lock(Host* host);
 void host_unlock(Host* host);
 
-#ifdef USE_PERF_TIMERS
+#if defined(USE_PERF_TIMERS) || defined(USE_CPU_TIME)
 void host_continueExecutionTimer(Host* host);
 void host_stopExecutionTimer(Host* host);
+gdouble host_getElapsedExecutionTime(Host* host);
 #else
 // define macros that do nothing
 #define host_continueExecutionTimer(host)
 #define host_stopExecutionTimer(host)
+#define host_getElapsedExecutionTime(host) 0
 #endif
 
 void host_setup(Host* host, DNS* dns, Topology* topology, guint rawCPUFreq, const gchar* hostRootPath);

@@ -22,6 +22,7 @@ Tracker* tracker_new(SimulationTime interval, LogLevel loglevel, LogInfoFlags lo
 void tracker_free(Tracker* tracker);
 
 void tracker_addProcessingTime(Tracker* tracker, SimulationTime processingTime);
+void tracker_setProcessingTime(Tracker* tracker, SimulationTime processingTime);
 void tracker_addVirtualProcessingDelay(Tracker* tracker, SimulationTime delay);
 void tracker_addInputBytes(Tracker* tracker, Packet* packet, gint handle);
 void tracker_addOutputBytes(Tracker* tracker, Packet* packet, gint handle);

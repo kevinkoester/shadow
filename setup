@@ -67,6 +67,11 @@ def main():
         action="store_true", dest="do_use_perf_timers",
         default=False)
 
+    parser_build.add_argument('--use-cpu-timer',
+        help="compile in a timer for tracking the run used cpu time on every host",
+        action="store_true", dest="do_use_cpu_timer",
+        default=False)
+
     parser_build.add_argument('-v', '--verbose',
         help="print verbose output from the compiler",
         action="store_true", dest="do_verbose",
@@ -185,6 +190,7 @@ def build(args):
     if args.do_valgrind: cmake_cmd += " -DLOADER_VALGRIND=ON"
     if args.do_werror: cmake_cmd += " -DSHADOW_WERROR=ON"
     if args.do_use_perf_timers: cmake_cmd += " -DSHADOW_USE_PERF_TIMERS=ON"
+    if args.do_use_cpu_timer: cmake_cmd += " -DSHADOW_USE_CPU_TIMER=ON"
 
     # we will run from build directory
     calledDirectory = os.getcwd()

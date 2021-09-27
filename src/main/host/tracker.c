@@ -169,6 +169,15 @@ void tracker_addProcessingTime(Tracker* tracker, SimulationTime processingTime) 
     }
 }
 
+void tracker_setProcessingTime(Tracker* tracker, SimulationTime processingTime) {
+    MAGIC_ASSERT(tracker);
+    if(processingTime < tracker->processingTimeTotal) {
+        message("WARNING! Reducing processing time! %lu < %lu", processingTime, tracker->processingTimeTotal);
+    }
+    tracker->processingTimeTotal = processingTime;
+}
+
+
 void tracker_addVirtualProcessingDelay(Tracker* tracker, SimulationTime delay) {
     MAGIC_ASSERT(tracker);
 
@@ -432,7 +441,7 @@ static void _tracker_logNode(Tracker* tracker, LogLevel level, SimulationTime in
                    // clang-format off (Tries to break at -'s)
                    "[shadow-heartbeat] [node-header] "
                    "interval-seconds,recv-bytes,send-bytes,cpu-percent,"
-                   "delayed-count,avgdelay-milliseconds;"
+                   "delayed-count,avgdelay-milliseconds,cpu-total-time,cpu-interval-time;"
                    "inbound-localhost-counters;outbound-localhost-counters;"
                    "inbound-remote-counters;outbound-remote-counters "
                    "where counters are: %s",
@@ -450,8 +459,8 @@ static void _tracker_logNode(Tracker* tracker, LogLevel level, SimulationTime in
 
     GString* buffer = g_string_new("[shadow-heartbeat] [node] ");
 
-    g_string_append_printf(buffer, "%u,%"G_GSIZE_FORMAT",%"G_GSIZE_FORMAT",%f,%"G_GSIZE_FORMAT",%f;",
-            seconds, totalRecvBytes, totalSendBytes, cpuutil, tracker->numDelayedLastInterval, avgdelayms);
+    g_string_append_printf(buffer, "%u,%"G_GSIZE_FORMAT",%"G_GSIZE_FORMAT",%f,%"G_GSIZE_FORMAT",%f,%lu,%lu;",
+            seconds, totalRecvBytes, totalSendBytes, cpuutil, tracker->numDelayedLastInterval, avgdelayms, tracker->processingTimeTotal, tracker->processingTimeLastInterval);
     g_string_append_printf(buffer, "%s;%s;%s;%s", inLocal, outLocal, inRemote, outRemote);
 
     logger_log(logger_getDefault(), level, __FILE__, __FUNCTION__, __LINE__,
