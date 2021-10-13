@@ -86,7 +86,7 @@ void event_execute(Event* event) {
         host_continueExecutionTimer(event->dstHost);
         task_execute(event->task);
         gdouble after = host_getElapsedExecutionTime(event->dstHost);
-        tracker_setProcessingTime(host_getTracker(event->dstHost), after / SIMTIME_ONE_SECOND);
+        tracker_setProcessingTime(host_getTracker(event->dstHost), after * SIMTIME_ONE_SECOND);
         host_stopExecutionTimer(event->dstHost);
     }
 
