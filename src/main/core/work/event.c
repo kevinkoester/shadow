@@ -85,9 +85,9 @@ void event_execute(Event* event) {
         /* cpu is not blocked, its ok to execute the event */
         host_continueExecutionTimer(event->dstHost);
         task_execute(event->task);
+        host_stopExecutionTimer(event->dstHost);
         gdouble after = host_getElapsedExecutionTime(event->dstHost);
         tracker_setProcessingTime(host_getTracker(event->dstHost), after * SIMTIME_ONE_SECOND);
-        host_stopExecutionTimer(event->dstHost);
     }
 
     worker_setActiveHost(NULL);
